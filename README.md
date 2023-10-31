@@ -1,37 +1,56 @@
 Tasks and the back stack
 ===
 
-# singleTask & FLAG_ACTIVITY_BROUGHT_TO_FRONT
-* If, when starting the activity, there is already a task running that starts with this activity, then instead of starting a new instance the current task is brought to the front. 
-* The existing instance will receive a call to Activity.onNewIntent() with the new Intent that is being started, and with the Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT flag set. 
-* This is a superset of the singleTop mode, where if there is already an instance of the activity being started at the top of the stack, it will receive the Intent as described there (without the FLAG_ACTIVITY_BROUGHT_TO_FRONT flag set).
-* The system creates the activity at the root of a new task or locates the activity on an existing task with the same affinity. 
-* If an instance of the activity already exists, the system routes the intent to the existing instance through a call to its onNewIntent() method, rather than creating a new instance. 
-* Meanwhile all of the other activities on top of it are destroyed.
+# singleInstance
+* Only allow one instance of this activity to ever be running. 
+* This activity gets a unique task with only itself running in it; if it is ever launched again with the same Intent, then that task will be brought forward and its Activity.onNewIntent() method called. 
+* If this activity tries to start a new activity, that new activity will be launched in a separate task.
+* The activity is always the single and only member of its task. Any activities started by this one open in a separate task.
 
 ## Example
-**Before**
-In task 1 \
-Activity 1->2->3->4
+**Begin** \
+task#1 : Activity 1 
+
+**First** \
+task#1 : Activity 1 \
+task#2 : Activity 2 
+```kotlin!
+// MainActivity1
+val intent = Intent(applicationContext, MainActivity2::class.java)
+startActivity(intent)
+```
+
+**Second** \
+task#1 : Activity 1->3->4 \
+task#2 : Activity 2 
+```kotlin!
+// MainActivity2
+val intent = Intent(applicationContext, MainActivity3::class.java)
+startActivity(intent)
+// MainActivity3
+val intent = Intent(applicationContext, MainActivity4::class.java)
+startActivity(intent)
+```
+
+**Third** \
+task#1 : Activity 1->3->4 \
+task#2 : Activity 2 
 ```kotlin!
 // MainActivity4
-val intent = Intent(context, MainActivity2::class.java).apply {
-    flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
+ val intent = Intent(applicationContext, MainActivity2::class.java).apply {
     putExtra("toEnd", true)
 }
 startActivity(intent)
 ```
-**After**
-In task 1 \
-Activity 1->2->5
+**Final** \
+task#1 : Activity 1->3->4->5 \
+task#2 : Activity 2 
 ```kotlin!
 // MainActivity2
-override fun onNewIntent(intent: Intent?) {
+ override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
 
     val toEnd = intent?.getBooleanExtra("toEnd", false) ?: false
-    Log.d(tag, "has extra: ${intent?.hasExtra("toEnd")}, value: $toEnd")
-
     if (toEnd) {
         val mIntent = Intent(applicationContext, MainActivity5::class.java)
         startActivity(mIntent)
