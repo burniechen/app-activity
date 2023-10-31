@@ -14,19 +14,16 @@ class MainActivity2 : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        Log.d(tag, "has stop: ${intent.hasExtra("stop")}")
-        val stop = intent?.getBooleanExtra("stop", false) ?: false
-        Log.d(tag, "stop: $stop")
+        Log.d(tag, "has extra: ${intent.hasExtra("toEnd")}")
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
 
-        Log.d(tag, "has stop: ${intent?.hasExtra("stop")}")
-        val stop = intent?.getBooleanExtra("stop", false) ?: false
-        Log.d(tag, "stop: $stop")
+        val toEnd = intent?.getBooleanExtra("toEnd", false) ?: false
+        Log.d(tag, "has extra: ${intent?.hasExtra("toEnd")}, value: $toEnd")
 
-        if (stop) {
+        if (toEnd) {
             val mIntent = Intent(applicationContext, MainActivity5::class.java)
             startActivity(mIntent)
         }

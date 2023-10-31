@@ -17,9 +17,24 @@ Activity 1->2->3->4
 // MainActivity4
 val intent = Intent(context, MainActivity2::class.java).apply {
     flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
+    putExtra("toEnd", true)
 }
 startActivity(intent)
 ```
 **After**
 In task 1 \
-Activity 1->2
+Activity 1->2->5
+```kotlin!
+// MainActivity2
+override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+
+    val toEnd = intent?.getBooleanExtra("toEnd", false) ?: false
+    Log.d(tag, "has extra: ${intent?.hasExtra("toEnd")}, value: $toEnd")
+
+    if (toEnd) {
+        val mIntent = Intent(applicationContext, MainActivity5::class.java)
+        startActivity(mIntent)
+    }
+}
+```

@@ -18,17 +18,24 @@ import androidx.compose.ui.Modifier
 import com.example.app_activity.ui.theme.AppactivityTheme
 
 open class BaseActivity : ComponentActivity() {
-    private lateinit var className: String
     lateinit var tag: String
     private lateinit var am: ActivityManager
+    private val hashCode = Integer.toHexString(this.hashCode())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        className = this::class.java.simpleName
-        tag = className
+        tag = this::class.java.simpleName
 
-        Log.d(tag, "[$tag] onCreate")
+        Log.d(tag, "===== onCreate =====")
+        Log.d(tag, "$tag@$hashCode in task#$taskId")
+
         am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        am.appTasks.forEach { task ->
+            Log.d(tag, "id: ${task.taskInfo.taskId}")
+            Log.d(tag, "size: ${task.taskInfo.numActivities}")
+            Log.d(tag, "base: ${task.taskInfo.baseActivity?.className}")
+            Log.d(tag, "top: ${task.taskInfo.topActivity?.className}")
+        }
 
         setContent {
             AppactivityTheme {
@@ -42,7 +49,7 @@ open class BaseActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        Text("this is $className")
+                        Text("this is $tag")
                     }
                 }
             }
@@ -51,19 +58,13 @@ open class BaseActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d(tag, "[$tag] onResume")
-        val tasks = am.appTasks
-        tasks.forEach { task ->
-            Log.d(tag, "id: ${task.taskInfo.taskId}")
-            Log.d(tag, "size: ${task.taskInfo.numActivities}")
-            Log.d(tag, "base: ${task.taskInfo.baseActivity}")
-            Log.d(tag, "top: ${task.taskInfo.topActivity}")
-        }
-        Log.d(tag, "[$tag] in task No.$taskId")
+        Log.d(tag, "===== onResume =====")
+        Log.d(tag, "$tag@$hashCode in task#$taskId")
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d(tag, "[$tag] onNewIntent")
+        Log.d(tag, "===== onNewIntent =====")
+        Log.d(tag, "$tag@$hashCode in task#$taskId")
     }
 }
