@@ -23,18 +23,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity2"
-            android:launchMode="singleTask"
-            android:exported="false" />
-
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".MainActivity3"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity4"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity5"
             android:exported="false" />
     </application>
 
