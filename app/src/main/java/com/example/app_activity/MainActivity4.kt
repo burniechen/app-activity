@@ -8,7 +8,7 @@ class MainActivity4 : BaseActivity() {
         super.onCreate(savedInstanceState)
         val intent = Intent(applicationContext, MainActivity2::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
-            putExtra("stop", true)
+            putExtra("toEnd", true)
         }
         startActivity(intent)
     }

@@ -10,9 +10,11 @@ Tasks and the back stack
 * Meanwhile all of the other activities on top of it are destroyed.
 
 ## Example
-**Before**
-In task 1 \
-Activity 1->2->3->4
+**Begin** \
+task#1 : Activity 1->2->3->4
+
+**Next** \
+task#1 : Activity 1->2
 ```kotlin!
 // MainActivity4
 val intent = Intent(context, MainActivity2::class.java).apply {
@@ -20,6 +22,18 @@ val intent = Intent(context, MainActivity2::class.java).apply {
 }
 startActivity(intent)
 ```
-**After**
-In task 1 \
-Activity 1->2
+
+**Final** \
+task#1 : Activity 1->2->5
+```kotlin!
+// MainActivity2
+override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+
+    val toEnd = intent?.getBooleanExtra("toEnd", false) ?: false
+    if (toEnd) {
+        val mIntent = Intent(applicationContext, MainActivity5::class.java)
+        startActivity(mIntent)
+    }
+}
+```
